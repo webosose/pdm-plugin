@@ -31,6 +31,8 @@ protected:
 public:
     PlugInSubject();
     ~PlugInSubject();
+    PlugInSubject(const PlugInSubject&) = delete;
+    PlugInSubject& operator=(const PlugInSubject&) = delete;
     void attach(IObserver* pIObserver);
 };
 #endif /* PLUGINSUBJECT_H_ */
