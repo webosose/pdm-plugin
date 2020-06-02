@@ -1,0 +1,4 @@
+Open Source Software Package:
+- name: webOSOSE-pdm-plugin
+  source: https://github.com/webosose/pdm-plugin
+  license: Apache-2.0
