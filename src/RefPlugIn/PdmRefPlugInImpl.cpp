@@ -1,4 +1,4 @@
-// Copyright (c) 2019 LG Electronics, Inc.
+// Copyright (c) 2019-2020 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "PdmRefPlugInImpl.h"
+#define RESUME_DONE_TIMEOUT 1000*6
 
 Plugin *instantiatePlugin(Mananger *manager, LSHandle *lunaHandle) {
     return new (std::nothrow) PdmRefPlugInImpl(manager, lunaHandle);
@@ -27,14 +28,22 @@ PdmRefPlugInImpl::PdmRefPlugInImpl(Mananger *manager, LSHandle *lunaHandle):
 
 bool PdmRefPlugInImpl::init() {
     attach(m_Manager);
-    notifyChange(PlugInEvent, POWER_STATE_RESUME_DONE);
+    m_resumeDone = g_timeout_add(RESUME_DONE_TIMEOUT, (GSourceFunc) resumeDoneNotification, this);
     return true;
 }
 
 void PdmRefPlugInImpl::deInit() {
-
+    if(m_resumeDone){
+        g_source_remove(m_resumeDone);
+        m_resumeDone = 0;
+    }
 }
 
-void PdmRefPlugInImpl::notifyChange(const int &eventID, const int &eventType, IDevice *device) {
-     notify(eventID, eventType, device);
+gboolean PdmRefPlugInImpl::resumeDoneNotification(PdmRefPlugInImpl *pdmRefPlugInImpl) {
+    pdmRefPlugInImpl->notifyChange(PlugInEvent, POWER_STATE_RESUME_DONE);
+    if(pdmRefPlugInImpl->m_resumeDone){
+        g_source_remove(pdmRefPlugInImpl->m_resumeDone);
+        pdmRefPlugInImpl->m_resumeDone = 0;
+    }
+    return false;
 }
