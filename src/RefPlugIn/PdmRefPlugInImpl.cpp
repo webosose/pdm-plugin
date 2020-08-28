@@ -38,6 +38,9 @@ void PdmRefPlugInImpl::deInit() {
         m_resumeDone = 0;
     }
 }
+void PdmRefPlugInImpl::notifyChange(const int &eventID, const int &eventType, IDevice *device) {
+    notify(eventID, eventType, device);
+ }
 
 gboolean PdmRefPlugInImpl::resumeDoneNotification(PdmRefPlugInImpl *pdmRefPlugInImpl) {
     pdmRefPlugInImpl->notifyChange(PlugInEvent, POWER_STATE_RESUME_DONE);
