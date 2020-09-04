@@ -15,7 +15,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "PdmRefPlugInImpl.h"
-#define RESUME_DONE_TIMEOUT 1000*6
+#include "PdmPlugInLog.h"
+#define RESUME_DONE_TIMEOUT 12
 
 Plugin *instantiatePlugin(Mananger *manager, LSHandle *lunaHandle) {
     return new (std::nothrow) PdmRefPlugInImpl(manager, lunaHandle);
@@ -27,8 +28,9 @@ PdmRefPlugInImpl::PdmRefPlugInImpl(Mananger *manager, LSHandle *lunaHandle):
 }
 
 bool PdmRefPlugInImpl::init() {
+    PDM_PLUGIN_LOG_INFO("PdmRefPlugInImpl:",0,"%s line: %d", __FUNCTION__,__LINE__);
     attach(m_Manager);
-    m_resumeDone = g_timeout_add(RESUME_DONE_TIMEOUT, (GSourceFunc) resumeDoneNotification, this);
+    m_resumeDone = g_timeout_add_seconds(RESUME_DONE_TIMEOUT, (GSourceFunc) resumeDoneNotification, this);
     return true;
 }
 
@@ -43,6 +45,7 @@ void PdmRefPlugInImpl::notifyChange(const int &eventID, const int &eventType, ID
  }
 
 gboolean PdmRefPlugInImpl::resumeDoneNotification(PdmRefPlugInImpl *pdmRefPlugInImpl) {
+    PDM_PLUGIN_LOG_INFO("PdmRefPlugInImpl:",0,"%s line: %d Notifying resume done", __FUNCTION__,__LINE__);
     pdmRefPlugInImpl->notifyChange(PlugInEvent, POWER_STATE_RESUME_DONE);
     if(pdmRefPlugInImpl->m_resumeDone){
         g_source_remove(pdmRefPlugInImpl->m_resumeDone);
