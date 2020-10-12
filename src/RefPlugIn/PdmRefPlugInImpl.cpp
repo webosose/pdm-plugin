@@ -23,7 +23,7 @@ Plugin *instantiatePlugin(Mananger *manager, LSHandle *lunaHandle) {
 }
 
 PdmRefPlugInImpl::PdmRefPlugInImpl(Mananger *manager, LSHandle *lunaHandle):
-                        PluginBase(manager, lunaHandle) {
+                        PluginBase(manager, lunaHandle),m_resumeDone(0) {
 
 }
 
